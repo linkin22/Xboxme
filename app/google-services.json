@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_id": "xboxme-ramogi",
+    "project_number": "172331846749",
+    "name": "xboxme"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172331846749:android:b51985c09ea86eed",
+        "client_id": "android:com.ramogi.xboxme",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.ramogi.xboxme",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172331846749-5ciu2ep575dapvhrv0f5aaftituukuor.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ramogi.xboxme",
+            "certificate_hash": "B0E0D8B96A998AB7E364D61F5D09DA7735D7017B"
+          }
+        },
+        {
+          "client_id": "172331846749-46eqao6ubpif50nqfbvvbmkh9pa4etc3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-70184919-2"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172331846749-46eqao6ubpif50nqfbvvbmkh9pa4etc3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 2,
+          "test_banner_ad_unit_id": "ca-app-pub-3940256099942544/6300978111",
+          "test_interstitial_ad_unit_id": "ca-app-pub-3940256099942544/1033173712"
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
