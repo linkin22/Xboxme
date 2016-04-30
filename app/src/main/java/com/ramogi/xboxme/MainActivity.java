@@ -2,6 +2,7 @@ package com.ramogi.xboxme;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,8 +27,16 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.ramogi.xboxme.backend.mylocationApi.model.Mylocation;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
@@ -46,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements
      */
     protected GoogleApiClient mGoogleApiClient;
 
+
+
     /**
      * Represents a geographical location.
      */
@@ -55,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements
     protected String mLongitudeLabel;
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    private GoogleMap mMap;
+    private String displayname;
+    private String email;
+    private String profileurl;
+    private GoogleAccountCredential credential = null;
+    private SharedPreferences settings;
 
 
     @Override
@@ -73,9 +90,12 @@ public class MainActivity extends AppCompatActivity implements
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
 
-        Fragment fragment = new MapFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        settings = getSharedPreferences(
+                "TicTacToeSample", 0);
+        credential = GoogleAccountCredential.usingAudience(this,
+                "server:client_id:1-web-app.apps.googleusercontent.com");
+
+
 
 
 
@@ -113,6 +133,59 @@ public class MainActivity extends AppCompatActivity implements
         // [END customize_button]
     }
 
+    public void callthemap(){
+
+        MapFragment mapFragment = new MapFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, mapFragment).commit();
+        //fragment.getFragmentManager();
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        //MapFragment mapFragment = (MapFragment) fragment.getFragmentManager()
+        // .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback()  {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+
+                mMap = googleMap;
+                //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+                //UiSettings uiSettings = mMap.getUiSettings();
+
+                mMap.getUiSettings().setAllGesturesEnabled(true);
+
+                //setmMap(googleMap);
+
+                // Add a marker in Sydney and move the camera
+                LatLng mylocation = new LatLng(getmLastLocation().getLatitude(), getmLastLocation().getLongitude());
+                mMap.addMarker(new MarkerOptions().position(mylocation).title(getDisplayname()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mylocation, 15));
+
+                updatemylocation();
+
+
+
+
+            }
+        });
+
+    }
+
+    public void updatemylocation(){
+        Mylocation mylocation = new Mylocation();
+        mylocation.setEmail(getEmail());
+        mylocation.setDisplayname(getDisplayname());
+        mylocation.setLatx(getmLastLocation().getLatitude());
+        mylocation.setLongy(getmLastLocation().getLongitude());
+        mylocation.setUrl(getProfileurl());
+
+
+
+        Updatelocation updatelocation = new Updatelocation(mylocation,this,credential);
+        updatelocation.execute();
+    }
+
+
     @Override
     public void onConnected(Bundle connectionHint) {
         // Provides a simple way of getting a device's location and is well suited for
@@ -125,6 +198,11 @@ public class MainActivity extends AppCompatActivity implements
                     mLastLocation.getLatitude()));
             mLongitudeText.setText(String.format("%s: %f", mLongitudeLabel,
                     mLastLocation.getLongitude()));
+
+            setmLastLocation(mLastLocation);
+
+            callthemap();
+
         } else {
             Toast.makeText(this, R.string.no_location_detected, Toast.LENGTH_LONG).show();
         }
@@ -189,9 +267,15 @@ public class MainActivity extends AppCompatActivity implements
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
+
+
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            setDisplayname(acct.getDisplayName());
+            setEmail(acct.getEmail());
+            setProfileurl(acct.getPhotoUrl().toString());
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -285,5 +369,43 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public Location getmLastLocation() {
+        return mLastLocation;
+    }
 
+    public void setmLastLocation(Location mLastLocation) {
+        this.mLastLocation = mLastLocation;
+    }
+
+    public GoogleMap getmMap() {
+        return mMap;
+    }
+
+    public void setmMap(GoogleMap mMap) {
+        this.mMap = mMap;
+    }
+
+    public String getDisplayname() {
+        return displayname;
+    }
+
+    public void setDisplayname(String displayname) {
+        this.displayname = displayname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getProfileurl() {
+        return profileurl;
+    }
+
+    public void setProfileurl(String profileurl) {
+        this.profileurl = profileurl;
+    }
 }

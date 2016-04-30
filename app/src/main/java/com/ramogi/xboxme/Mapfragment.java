@@ -23,7 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Use the {@link Mapfragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Mapfragment extends Fragment implements OnMapReadyCallback  {
+public class Mapfragment extends Fragment   {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,6 +34,7 @@ public class Mapfragment extends Fragment implements OnMapReadyCallback  {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private OnMapReadyCallback onMapReadyCallback;
 
     private GoogleMap mMap;
 
@@ -80,12 +81,14 @@ public class Mapfragment extends Fragment implements OnMapReadyCallback  {
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        /*
         SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
-
+*/
 
 
         return rootView;
@@ -103,6 +106,7 @@ public class Mapfragment extends Fragment implements OnMapReadyCallback  {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            onMapReadyCallback = (OnMapReadyCallback) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -139,13 +143,17 @@ public class Mapfragment extends Fragment implements OnMapReadyCallback  {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+    //@Override
+    public interface OnMapReadyCallback {
+
+        public void onMapCalled(GoogleMap googleMap);
+        /*
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        */
     }
 }
